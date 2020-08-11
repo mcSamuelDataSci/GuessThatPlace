@@ -28,7 +28,7 @@ options(tigris_use_cache = TRUE, tigris_class = "sf")  #from nameThatPlaceStart 
 us_states  <- states(cb = TRUE)  
 
 # map an outline map based on this object using the "tmap" package
-tm_shape(us_states) + tm_polygons()
+#tm_shape(us_states) + tm_polygons()
 
 
 not_continential_US <- c("Hawaii",
