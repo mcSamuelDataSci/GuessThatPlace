@@ -17,6 +17,7 @@ library(tigris)     # counties, places (cities), school_districts
 library(dplyr)
 library(sf)     
 library(tmap)
+library(leaflet)
 
 options(tigris_use_cache = TRUE, tigris_class = "sf")  #from nameThatPlaceStart file
 
@@ -55,12 +56,13 @@ ui <- fluidPage( theme = shinytheme("simplex"),
                              ), # mainPanel 
                             ),
                     
-                    tabPanel("Play!", mainPanel(       #tmapOutput(outputId = "map"),
+                    tabPanel("Play!", 
                         h1("How Much Geography Do You Know?"),
                         
                         sidebarPanel(selectInput("states", 
                                                  label = "What is the name of the highlighted state?", 
                                                  us_states$NAME)),
+                        mainPanel(       leafletOutput(outputId = "map"),
                       ),
                     ),
                     
@@ -77,9 +79,8 @@ ui <- fluidPage( theme = shinytheme("simplex"),
 # Define server function  
 server <- function(input, output) {
   
-   #output$map <- renderTmap({ tm_shape(us_states) + 
-      # tm_polygons() 
-    # }) I keep getting an error that says "cannot read property id of null"
+   output$map <- renderLeaflet({ tm_shape(us_states) +  tm_polygons() 
+     })  # I keep getting an error that says "cannot read property id of null"
      
   # })
    
