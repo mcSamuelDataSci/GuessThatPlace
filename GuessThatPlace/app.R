@@ -17,6 +17,7 @@ library(tigris)     # counties, places (cities), school_districts
 library(dplyr)
 library(sf)     
 library(tmap)
+library(leaflet)
 
 options(tigris_use_cache = TRUE, tigris_class = "sf")  #from nameThatPlaceStart file
 
@@ -27,7 +28,7 @@ options(tigris_use_cache = TRUE, tigris_class = "sf")  #from nameThatPlaceStart 
 us_states  <- states(cb = TRUE)  
 
 # map an outline map based on this object using the "tmap" package
-tm_shape(us_states) + tm_polygons()
+#tm_shape(us_states) + tm_polygons()
 
 
 not_continential_US <- c("Hawaii",
@@ -40,12 +41,42 @@ not_continential_US <- c("Hawaii",
 
 us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
+gameMap <- function(myState = "California", myShowNames = TRUE)
+{ tmap_mode("plot") 
+ 
+  one_state <- filter(us_states, NAME == myState)
+  
+  tempMap <-
+    tm_shape(us_states) + 
+    tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+    tm_shape(one_state, popup.vars = FALSE) + 
+    tm_fill(col="red2", popup.vars = FALSE) 
+  
+  if (myShowNames){
+    tempMap + 
+      tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + tm_view(text.size.variable = TRUE)
+  }
+  tempMap
+}
+
+name_states <- sort(us_states$NAME)
 
 # Define UI
 ui <- fluidPage( theme = shinytheme("simplex"), 
                 navbarPage(
                      theme = "cerulean", 
                     "GuessThatPlace",
+                    
+                    tabPanel("Play!", 
+                             h1("How Much Geography Do You Know?"),
+                             
+                             sidebarPanel(selectInput(inputId = "states", 
+                                                      label = "What is the name of the highlighted state?", 
+                                                      choices = name_states)),
+                                         checkboxInput(inputId = "myShowNames", 
+                                                      label = "Show names of states?")),
+                             mainPanel(plotOutput(outputId = "map"),
+                             ),
                     
                     tabPanel("Instructions", #could make different panels for different levels
                              mainPanel(
@@ -55,14 +86,7 @@ ui <- fluidPage( theme = shinytheme("simplex"),
                              ), # mainPanel 
                             ),
                     
-                    tabPanel("Play!", mainPanel(       #tmapOutput(outputId = "map"),
-                        h1("How Much Geography Do You Know?"),
-                        
-                        sidebarPanel(selectInput("states", 
-                                                 label = "What is the name of the highlighted state?", 
-                                                 us_states$NAME)),
-                      ),
-                    ),
+                   
                     
                     tabPanel("About", mainPanel(
                         h1("Let's tell you a few things"),
@@ -77,11 +101,9 @@ ui <- fluidPage( theme = shinytheme("simplex"),
 # Define server function  
 server <- function(input, output) {
   
-   #output$map <- renderTmap({ tm_shape(us_states) + 
-      # tm_polygons() 
-    # }) I keep getting an error that says "cannot read property id of null"
+   output$map <- renderPlot(gameMap(input$states, input$myShowNames)) 
      
-  # })
+  
    
 } # server
 
