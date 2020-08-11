@@ -34,8 +34,9 @@ not_continential_US <- c("Hawaii",
 
 us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
-one_state    <- us_states %>% sample_n(1)
-
+#one_state    <- us_states %>% sample_n(1)
+one_state <- filter(us_states, NAME == "Iowa")
+  
 tm_shape(us_states) + tm_polygons(col = "slategray2", popup.vars = FALSE) + tm_shape(one_state) + tm_fill(col="red2", popup.vars = FALSE)
 
 tm_shape(us_states) + tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) + tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") +
@@ -63,7 +64,7 @@ tmap_mode("view")
 #About Leaflet, https://rstudio.github.io/leaflet/shapes.html 
 #Zev Ross's blog about tmap, http://zevross.com/blog/2018/10/02/creating-beautiful-demographic-maps-in-r-with-the-tidycensus-and-tmap-packages/#adding-additional-layers-to-the-map
 #Shiny tutorial: https://shiny.rstudio.com/tutorial/
-#Git tutorial: https://www.youtube.com/watch?v=0fKg7e37bQE
+#Git tutorial: https://www.youtube.com/watch?v=0fKg7e37bQE, https://www.youtube.com/watch?v=E2d91v1Twcc
 
 
 
