@@ -43,7 +43,7 @@ us_states <-  filter(us_states, ! NAME %in% not_continential_US)
 
 gameMap <- function(myState = "California", myShowNames = TRUE)
 { tmap_mode("plot") 
-  
+ 
   one_state <- filter(us_states, NAME == myState)
   
   tempMap <-
@@ -63,48 +63,48 @@ name_states <- sort(us_states$NAME)
 
 # Define UI
 ui <- fluidPage( theme = shinytheme("simplex"), 
-                 navbarPage(
-                   theme = "cerulean", 
-                   "GuessThatPlace",
+                navbarPage(
+                     theme = "cerulean", 
+                    "GuessThatPlace",
+                    
+                    tabPanel("Play!", 
+                             h1("How Much Geography Do You Know?"),
+                             
+                             sidebarPanel(selectInput(inputId = "states", 
+                                                      label = "What is the name of the highlighted state?", 
+                                                      choices = name_states)),
+                                         checkboxInput(inputId = "myShowNames", 
+                                                      label = "Show names of states?")),
+                             mainPanel(plotOutput(outputId = "map"),
+                             ),
+                    
+                    tabPanel("Instructions", #could make different panels for different levels
+                             mainPanel(
+                                 h1("How to Play:"),
+                                 
+                                 h4("Learn All the Cool Features of GuessThatPlace!")
+                             ), # mainPanel 
+                            ),
+                    
                    
-                   tabPanel("Play!", 
-                            h1("How Much Geography Do You Know?"),
-                            
-                            sidebarPanel(selectInput(inputId = "states", 
-                                                     label = "What is the name of the highlighted state?", 
-                                                     choices = name_states)),
-                            checkboxInput(inputId = "myShowNames", 
-                                          label = "Show names of states?")),
-                   mainPanel(plotOutput(outputId = "map"),
-                   ),
-                   
-                   tabPanel("Instructions", #could make different panels for different levels
-                            mainPanel(
-                              h1("How to Play:"),
-                              
-                              h4("Learn All the Cool Features of GuessThatPlace!")
-                            ), # mainPanel 
-                   ),
-                   
-                   
-                   
-                   tabPanel("About", mainPanel(
-                     h1("Let's tell you a few things"),
-                     
-                     h4("by Tanya Bearson and Michael Samuels")
-                   ),
-                   )
-                 ) # navbarPage
+                    
+                    tabPanel("About", mainPanel(
+                        h1("Let's tell you a few things"),
+                        
+                        h4("by Tanya Bearson and Michael Samuels")
+                        ),
+                    )
+                ) # navbarPage
 ) # fluidPage
 
 
 # Define server function  
 server <- function(input, output) {
   
-  output$map <- renderPlot(gameMap(input$states, input$myShowNames)) 
+   output$map <- renderPlot(gameMap(input$states, input$myShowNames)) 
+     
   
-  
-  
+   
 } # server
 
 
