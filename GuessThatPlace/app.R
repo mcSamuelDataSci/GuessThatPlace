@@ -13,26 +13,57 @@
 # Load R packages
 library(shiny)
 library(shinythemes)
+library(tigris)     # counties, places (cities), school_districts
+library(dplyr)
+library(sf)     
+library(tmap)
+
+options(tigris_use_cache = TRUE, tigris_class = "sf")  #from nameThatPlaceStart file
+
+# ---------------------------------------------------------------------------------------------
+
+# read a map of United States from the U.S. Census Bureau with the "state" function of the tigris package
+#  and create an object called us_states
+us_states  <- states(cb = TRUE)  
+
+# map an outline map based on this object using the "tmap" package
+tm_shape(us_states) + tm_polygons()
+
+
+not_continential_US <- c("Hawaii",
+                         "Alaska",
+                         "Commonwealth of the Northern Mariana Islands",
+                         "Guam",
+                         "United States Virgin Islands",
+                         "American Samoa",
+                         "Puerto Rico" )
+
+us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
 
 # Define UI
-ui <- fluidPage(theme = shinytheme("simplex"), 
+ui <- fluidPage( theme = shinytheme("simplex"), 
                 navbarPage(
                      theme = "cerulean", 
                     "GuessThatPlace",
-                    tabPanel("Instructions", 
+                    
+                    tabPanel("Instructions", #could make different panels for different levels
                              mainPanel(
                                  h1("How to Play:"),
                                  
                                  h4("Learn All the Cool Features of GuessThatPlace!")
-                             ), # mainPanel
-                    ),
-                    tabPanel("Play!", mainPanel(
-                        h1("Here's the Game..."),
+                             ), # mainPanel 
+                            ),
+                    
+                    tabPanel("Play!", mainPanel(       #tmapOutput(outputId = "map"),
+                        h1("How Much Geography Do You Know?"),
                         
-                        h4(":)")
-                        )
+                        sidebarPanel(selectInput("states", 
+                                                 label = "What is the name of the highlighted state?", 
+                                                 us_states$NAME)),
+                      ),
                     ),
+                    
                     tabPanel("About", mainPanel(
                         h1("Let's tell you a few things"),
                         
@@ -45,10 +76,13 @@ ui <- fluidPage(theme = shinytheme("simplex"),
 
 # Define server function  
 server <- function(input, output) {
-    
-   # output$txtout <- renderText({
-        #paste( input$txt1, input$txt2, sep = " " )
-   # })
+  
+   #output$map <- renderTmap({ tm_shape(us_states) + 
+      # tm_polygons() 
+    # }) I keep getting an error that says "cannot read property id of null"
+     
+  # })
+   
 } # server
 
 
