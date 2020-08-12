@@ -41,7 +41,7 @@ not_continential_US <- c("Hawaii",
 
 us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
-gameMap <- function(myState = "California", myShowNames = TRUE)
+gameMap <- function(myState = "California", myShowNames)
 { tmap_mode("plot") 
   
   one_state <- filter(us_states, NAME == myState)
@@ -50,11 +50,20 @@ gameMap <- function(myState = "California", myShowNames = TRUE)
     tm_shape(us_states) + 
     tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
     tm_shape(one_state, popup.vars = FALSE) + 
-    tm_fill(col="red2", popup.vars = FALSE) 
+    tm_fill(col="red2", popup.vars = FALSE) +
+    tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border
   
   if (myShowNames){
-    tempMap + 
-      tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + tm_view(text.size.variable = TRUE)
+    tempMap <-
+      tm_shape(us_states) + 
+      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+      tm_shape(one_state, popup.vars = FALSE) + 
+      tm_fill(col="red2", popup.vars = FALSE) +
+      tm_shape(us_states) +
+      tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + 
+      tm_view(text.size.variable = TRUE) +
+      tm_layout(frame = FALSE, bg.color = "grey99")
+    
   }
   tempMap
 }
@@ -64,7 +73,6 @@ name_states <- sort(us_states$NAME)
 # Define UI
 ui <- fluidPage( theme = shinytheme("simplex"), 
                  navbarPage(
-                   theme = "cerulean", 
                    "GuessThatPlace",
                    
                    tabPanel("Play!", 
@@ -74,7 +82,7 @@ ui <- fluidPage( theme = shinytheme("simplex"),
                                                      label = "What is the name of the highlighted state?", 
                                                      choices = name_states)),
                             checkboxInput(inputId = "myShowNames", 
-                                          label = "Show names of states?")),
+                                         label = "Show names of states?")),
                    mainPanel(plotOutput(outputId = "map"),
                    ),
                    
