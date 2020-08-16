@@ -45,13 +45,14 @@ gameMap <- function(myState = "California", myShowNames)
 { tmap_mode("plot") 
   
   one_state <- filter(us_states, NAME == myState)
+  other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighted
   
   tempMap <-
     tm_shape(us_states) + 
     tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
     tm_shape(one_state, popup.vars = FALSE) + 
     tm_fill(col="red2", popup.vars = FALSE) +
-    tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border
+    tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
   
   if (myShowNames){
     tempMap <-
@@ -59,13 +60,14 @@ gameMap <- function(myState = "California", myShowNames)
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
       tm_shape(one_state, popup.vars = FALSE) + 
       tm_fill(col="red2", popup.vars = FALSE) +
-      tm_shape(us_states) +
+      tm_shape(other_states) +
       tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + 
       tm_view(text.size.variable = TRUE) +
       tm_layout(frame = FALSE, bg.color = "grey99")
     
   }
   tempMap
+  
 }
 
 name_states <- sort(us_states$NAME)
