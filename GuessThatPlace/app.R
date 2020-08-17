@@ -47,7 +47,7 @@ gameMap <- function(myState = "California", myShowNames)
  # one_state <- filter(us_states, NAME == myState)
  # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighted
   random_state    <- us_states %>% sample_n(1) #random
-  other_states <- filter(us_states, ! NAME == random_state) #names of all states except highlighted
+  other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
   
   tempMap <-
     tm_shape(us_states) + 
@@ -69,7 +69,13 @@ gameMap <- function(myState = "California", myShowNames)
     
   }
   if(myState == random_state$NAME){
-    showNotification(paste("Notification message"), duration = 0)
+    tempMap <-
+      tm_shape(us_states) + 
+      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+      tm_shape(random_state, popup.vars = FALSE) + 
+      tm_fill(col="green", popup.vars = FALSE) +
+      tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
+    
   }
   tempMap
   
