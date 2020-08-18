@@ -31,6 +31,10 @@ us_states  <- states(cb = TRUE)
 #tm_shape(us_states) + tm_polygons()
 
 
+
+
+
+
 not_continential_US <- c("Hawaii",
                          "Alaska",
                          "Commonwealth of the Northern Mariana Islands",
@@ -41,12 +45,26 @@ not_continential_US <- c("Hawaii",
 
 us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
-gameMap <- function(myState = "California", myShowNames)
-{ tmap_mode("plot") 
+
+tmap_mode("plot")
+
+
+random_state    <- us_states %>% sample_n(1) #random
+
+
+
+
+
+gameMap <- function(myState = "Indiana", myShowNames)
+{  
   
  # one_state <- filter(us_states, NAME == myState)
  # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighted
-  random_state    <- us_states %>% sample_n(1) #random
+  
+  if(myState == random_state$NAME){
+    random_state    <- us_states %>% sample_n(1) #random
+  }
+  
   other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
   
   tempMap <-
@@ -68,7 +86,8 @@ gameMap <- function(myState = "California", myShowNames)
       tm_layout(frame = FALSE, bg.color = "grey99")
     
   }
-  if(myState == random_state$NAME){
+
+    if(myState == random_state$NAME){
     tempMap <-
       tm_shape(us_states) + 
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
