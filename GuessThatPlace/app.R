@@ -62,7 +62,7 @@ gameMap <- function(myState = "Indiana", myShowNames)
  # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighted
   
   if(myState == random_state$NAME){
-    random_state    <- us_states %>% sample_n(1) #random
+    random_state    <<- us_states %>% sample_n(1) #random
   }
   
   other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
