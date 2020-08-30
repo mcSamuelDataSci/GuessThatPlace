@@ -50,30 +50,26 @@ tmap_mode("plot")
 
 
 random_state    <- us_states %>% sample_n(1) #random
-
+green <- FALSE
 
 
 
 
 gameMap <- function(myState = "Indiana", myShowNames)
 {  
-  
  # one_state <- filter(us_states, NAME == myState)
- # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighted
-  
-  if(myState == random_state$NAME){
-    random_state    <<- us_states %>% sample_n(1) #random
-  }
+ # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighte
   
   other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
   
   tempMap <-
-    tm_shape(us_states) + 
+    tm_shape(us_states) +
     tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
-    tm_shape(random_state, popup.vars = FALSE) + 
+    tm_shape(random_state, popup.vars = FALSE) +
     tm_fill(col="red2", popup.vars = FALSE) +
     tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
-   
+ 
+  
   if (myShowNames){
     tempMap <-
       tm_shape(us_states) + 
@@ -86,16 +82,28 @@ gameMap <- function(myState = "Indiana", myShowNames)
       tm_layout(frame = FALSE, bg.color = "grey99")
     
   }
-
-    if(myState == random_state$NAME){
+  
+  if(myState == random_state$NAME){ #turns state green when correct
     tempMap <-
-      tm_shape(us_states) + 
+      tm_shape(us_states) +
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
-      tm_shape(random_state, popup.vars = FALSE) + 
+      tm_shape(random_state, popup.vars = FALSE) +
       tm_fill(col="green", popup.vars = FALSE) +
+      tm_layout(frame = FALSE, bg.color = "grey99") #doesn't last long enough to show green state
+    
+      green <- TRUE
+  }
+   
+  if(green == TRUE){ 
+    green <- FALSE
+    random_state    <<- us_states %>% sample_n(1) #random
+    tempMap <- tm_shape(us_states) +
+      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+      tm_shape(random_state, popup.vars = FALSE) +
+      tm_fill(col="purple", popup.vars = FALSE) +   #changed to purple to show that it is happening
       tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
     
-  }
+  } 
   tempMap
   
 }
@@ -142,7 +150,6 @@ ui <- fluidPage( theme = shinytheme("simplex"),
 server <- function(input, output) {
   
   output$map <- renderPlot(gameMap(input$states, input$myShowNames)) 
- 
   
   
 } # server
