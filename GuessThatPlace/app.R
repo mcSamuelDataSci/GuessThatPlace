@@ -41,7 +41,8 @@ not_continential_US <- c("Hawaii",
                          "Guam",
                          "United States Virgin Islands",
                          "American Samoa",
-                         "Puerto Rico" )
+                         "Puerto Rico",
+                         "District of Columbia") #DC is too small to see when it's highlighted and isn't a state...
 
 us_states <-  filter(us_states, ! NAME %in% not_continential_US) 
 
@@ -55,7 +56,7 @@ green <- FALSE
 
 
 
-gameMap <- function(myState = "Indiana", myShowNames)
+gameMap <- function(myState = "Indiana", myShowNames, newState)
 {  
  # one_state <- filter(us_states, NAME == myState)
  # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighte
@@ -79,7 +80,7 @@ gameMap <- function(myState = "Indiana", myShowNames)
       tm_shape(other_states) +
       tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + 
       tm_view(text.size.variable = TRUE) +
-      tm_layout(frame = FALSE, bg.color = "grey99")
+      tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
     
   }
   
@@ -89,21 +90,19 @@ gameMap <- function(myState = "Indiana", myShowNames)
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
       tm_shape(random_state, popup.vars = FALSE) +
       tm_fill(col="green", popup.vars = FALSE) +
-      tm_layout(frame = FALSE, bg.color = "grey99") #doesn't last long enough to show green state
-    
-      green <- TRUE
+      tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
   }
    
-  if(green == TRUE){ 
-    green <- FALSE
+  if(newState){
+    #green <<- TRUE
     random_state    <<- us_states %>% sample_n(1) #random
     tempMap <- tm_shape(us_states) +
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
       tm_shape(random_state, popup.vars = FALSE) +
-      tm_fill(col="purple", popup.vars = FALSE) +   #changed to purple to show that it is happening
+      tm_fill(col="red2", popup.vars = FALSE) +   
       tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
     
-  } 
+    }
   tempMap
   
 }
@@ -122,7 +121,13 @@ ui <- fluidPage( theme = shinytheme("simplex"),
                                                      label = "What is the name of the highlighted state?", 
                                                      choices = name_states)),
                             checkboxInput(inputId = "myShowNames", 
-                                         label = "Show names of states?")),
+                                         label = "Show Names of States?"),
+                            # checkboxInput(inputId = "newState", 
+                            #      label = "Generate New State"),
+                            actionButton(
+                                   inputId = "newState",
+                                   label = "Generate New State"
+                                 )),
                    mainPanel(plotOutput(outputId = "map"),
                    ),
                    
@@ -148,11 +153,10 @@ ui <- fluidPage( theme = shinytheme("simplex"),
 
 # Define server function  
 server <- function(input, output) {
+
+  output$map <- renderPlot(gameMap(input$states, input$myShowNames, input$newState)) 
   
-  output$map <- renderPlot(gameMap(input$states, input$myShowNames)) 
-  
-  
-} # server
+  } # server
 
 
 # Create Shiny object
