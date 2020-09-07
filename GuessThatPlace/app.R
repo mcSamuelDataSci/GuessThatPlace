@@ -52,16 +52,17 @@ tmap_mode("plot")
 
 random_state    <- us_states %>% sample_n(1) #random
 green <- FALSE
-
+test_state <- filter(us_states, NAME == "California")
 
 
 
 gameMap <- function(myState = "Indiana", myShowNames, newState)
 {  
- # one_state <- filter(us_states, NAME == myState)
- # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighte
+  # one_state <- filter(us_states, NAME == myState)
+  # other_states <- filter(us_states, ! NAME == myState) #names of all states except highlighte
   
   other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
+  #other_states <- filter(us_states, NAME != test_state$NAME) #names of all states except highlighted
   
   tempMap <-
     tm_shape(us_states) +
@@ -69,20 +70,34 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
     tm_shape(random_state, popup.vars = FALSE) +
     tm_fill(col="red2", popup.vars = FALSE) +
     tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
- 
   
   if (myShowNames){
-    tempMap <-
-      tm_shape(us_states) + 
-      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
-      tm_shape(random_state, popup.vars = FALSE) + 
-      tm_fill(col="red2", popup.vars = FALSE) +
-      tm_shape(other_states) +
-      tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") + 
-      tm_view(text.size.variable = TRUE) +
-      tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
-    
+     tempMap <-
+       tm_shape(us_states) +
+       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+       tm_shape(random_state, popup.vars = FALSE) +
+       tm_fill(col="red2", popup.vars = FALSE) +
+       tm_shape(other_states) +
+       tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") +
+       tm_view(text.size.variable = TRUE) +
+       tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
+
   }
+  
+  if(newState){
+    random_state    <- us_states %>% sample_n(1)
+    #test_state <- filter(us_states, NAME == "Kansas")
+    
+    # tempMap <-
+    tm_shape(us_states) +
+      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
+      tm_shape(random_state, popup.vars = FALSE) +
+      tm_fill(col="red2", popup.vars = FALSE) +
+      tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
+
+  }
+  
+  
   
   if(myState == random_state$NAME){ #turns state green when correct
     tempMap <-
@@ -91,18 +106,10 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
       tm_shape(random_state, popup.vars = FALSE) +
       tm_fill(col="green", popup.vars = FALSE) +
       tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
-  }
-   
-  if(newState){
-    #green <<- TRUE
-    random_state    <<- us_states %>% sample_n(1) #random
-    tempMap <- tm_shape(us_states) +
-      tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
-      tm_shape(random_state, popup.vars = FALSE) +
-      tm_fill(col="red2", popup.vars = FALSE) +   
-      tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
     
-    }
+  }
+  
+  
   tempMap
   
 }
