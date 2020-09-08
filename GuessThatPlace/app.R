@@ -99,7 +99,7 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
     #newState <- FALSE
   } 
   
-  
+
   
   if(myState == random_state$NAME){ #turns state green when correct
     tempMap <-
