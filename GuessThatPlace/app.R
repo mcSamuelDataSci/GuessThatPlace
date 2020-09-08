@@ -52,7 +52,7 @@ tmap_mode("plot")
 
 random_state    <- us_states %>% sample_n(1) #random
 green <- FALSE
-test_state <- filter(us_states, NAME == "California")
+#test_state <- filter(us_states, NAME == "California")
 
 
 
@@ -80,12 +80,12 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
        tm_shape(other_states) +
        tm_text("NAME", size = "AREA",root = 4, fontfamily = "Times") +
        tm_view(text.size.variable = TRUE) +
-       tm_layout(frame = FALSE, bg.color = "grey99") #doesn't work after pressing generate new state button
+       tm_layout(frame = FALSE, bg.color = "grey99") #switches state when showing names after pressing generate new state button
 
   }
   
   if(newState){
-    random_state    <- us_states %>% sample_n(1)
+    random_state    <<- us_states %>% sample_n(1) #why does it go to red and then switch?
     #test_state <- filter(us_states, NAME == "Kansas")
     
     # tempMap <-
