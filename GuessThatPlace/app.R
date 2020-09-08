@@ -99,7 +99,6 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
     #newState <- FALSE
   } 
   
-  #print(newState)
   
   
   if(myState == random_state$NAME){ #turns state green when correct
@@ -166,7 +165,7 @@ server <- function(input, output, session) {
 
   output$map <- renderPlot(gameMap(input$states, input$myShowNames, input$newState)) 
   
-  observeEvent(input$newState,{
+  observeEvent(input$newState,{ #update check box
     if(input$newState )
     {updateCheckboxInput(session,"newState", value = FALSE )}
   })
