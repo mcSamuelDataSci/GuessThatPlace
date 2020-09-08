@@ -111,7 +111,6 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
     
   }
   
-  
    tempMap
   
 }
