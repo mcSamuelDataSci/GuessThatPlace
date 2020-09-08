@@ -51,7 +51,7 @@ tmap_mode("plot")
 
 
 random_state    <- us_states %>% sample_n(1) #random
-green <- FALSE
+#green <- FALSE
 #test_state <- filter(us_states, NAME == "California")
 
 
@@ -63,13 +63,15 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
   
   other_states <- filter(us_states, NAME != random_state$NAME) #names of all states except highlighted
   #other_states <- filter(us_states, NAME != test_state$NAME) #names of all states except highlighted
-  
+ 
+  if(newState == FALSE){
   tempMap <-
     tm_shape(us_states) +
     tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
     tm_shape(random_state, popup.vars = FALSE) +
     tm_fill(col="red2", popup.vars = FALSE) +
     tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
+ }
   
   if (myShowNames){
      tempMap <-
@@ -84,19 +86,20 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
 
   }
   
-  if(newState){
+  if(newState == TRUE){ 
     random_state    <<- us_states %>% sample_n(1) #why does it go to red and then switch?
     #test_state <- filter(us_states, NAME == "Kansas")
     
-    # tempMap <-
+    tempMap <-
     tm_shape(us_states) +
       tm_polygons(col = "slategray2", title = FALSE, popup.vars=c("Acronym:" = "STUSPS", "State:" = "NAME")) +
       tm_shape(random_state, popup.vars = FALSE) +
       tm_fill(col="red2", popup.vars = FALSE) +
       tm_layout(frame = FALSE, bg.color = "grey99") #gets rid of border around map and white background
-
-  }
+    #newState <- FALSE
+  } 
   
+  #print(newState)
   
   
   if(myState == random_state$NAME){ #turns state green when correct
@@ -110,7 +113,7 @@ gameMap <- function(myState = "Indiana", myShowNames, newState)
   }
   
   
-  tempMap
+   tempMap
   
 }
 
@@ -129,12 +132,12 @@ ui <- fluidPage( theme = shinytheme("simplex"),
                                                      choices = name_states)),
                             checkboxInput(inputId = "myShowNames", 
                                          label = "Show Names of States?"),
-                            # checkboxInput(inputId = "newState", 
-                            #      label = "Generate New State"),
-                            actionButton(
-                                   inputId = "newState",
-                                   label = "Generate New State"
-                                 )),
+                            checkboxInput(inputId = "newState",
+                                 label = "Generate New State")),
+                            # actionButton(
+                            #        inputId = "newState",
+                            #        label = "Generate New State"
+                            #      )),
                    mainPanel(plotOutput(outputId = "map"),
                    ),
                    
@@ -159,9 +162,15 @@ ui <- fluidPage( theme = shinytheme("simplex"),
 
 
 # Define server function  
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   output$map <- renderPlot(gameMap(input$states, input$myShowNames, input$newState)) 
+  
+  observeEvent(input$newState,{
+    if(input$newState )
+    {updateCheckboxInput(session,"newState", value = FALSE )}
+  })
+  
   
   } # server
 
